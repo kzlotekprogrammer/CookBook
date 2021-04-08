@@ -2,18 +2,21 @@ package pl.cookbook;
 
 import android.content.Context;
 
-import androidx.room.Room;
+import androidx.room.Query;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.util.List;
 
 import pl.cookbook.database.AppDatabase;
 import pl.cookbook.database.dao.ProductsDao;
+import pl.cookbook.database.dao.RecipesDao;
 import pl.cookbook.database.entities.Product;
+import pl.cookbook.database.entities.Recipe;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.junit.Assert.*;
@@ -34,8 +37,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void daoTest() {
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "database-name").build();
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
 
         ProductsDao productsDao = db.productsDao();
 
@@ -51,6 +53,24 @@ public class ExampleInstrumentedTest {
 
         for (Product pro : productsList) {
             productsDao.delete(pro);
+        }
+    }
+
+    @Test
+    public void fillDatabaseWithTestRecipes() {
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+        RecipesDao recipesDao = db.recipesDao();
+
+        recipesDao.deleteAll();
+
+        File imageFile = new File(getApplicationContext().getFilesDir(), "testImage.jpg");
+
+        for (int i = 0; i < 10; i++) {
+            Recipe recipe = new Recipe();
+            recipe.name = "Test" + (i + 1);
+            if (imageFile.exists() && i % 2 == 0)
+                recipe.imageFileName = imageFile.getName();
+            recipesDao.insertAll(recipe);
         }
     }
 }

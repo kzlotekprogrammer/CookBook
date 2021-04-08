@@ -19,4 +19,7 @@ public interface ProductsDao {
 
     @Delete
     void delete(Product product);
+
+    @Query("DELETE FROM Product")
+    void deleteAll();
 }

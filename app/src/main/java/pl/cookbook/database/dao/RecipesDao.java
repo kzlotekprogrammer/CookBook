@@ -19,4 +19,7 @@ public interface RecipesDao {
 
     @Delete
     void delete(Recipe recipe);
+
+    @Query("DELETE FROM Recipe")
+    void deleteAll();
 }
