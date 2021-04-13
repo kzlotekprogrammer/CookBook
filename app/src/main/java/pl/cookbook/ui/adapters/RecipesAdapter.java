@@ -12,16 +12,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.cookbook.R;
 import pl.cookbook.database.entities.Recipe;
+import pl.cookbook.ui.OnRecipesListItemInteractionListener;
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHolder> {
-    private final List<Recipe> recipesList;
+    private final List<Recipe> allRecipesList;
+    private final List<Recipe> filteredRecipesList;
+    private final OnRecipesListItemInteractionListener onRecipesListItemInteractionListener;
 
-    public RecipesAdapter(List<Recipe> recipesList) {
-        this.recipesList = recipesList;
+    public RecipesAdapter(List<Recipe> allRecipesList, OnRecipesListItemInteractionListener onRecipesListItemInteractionListener) {
+        this.allRecipesList = allRecipesList;
+        this.onRecipesListItemInteractionListener = onRecipesListItemInteractionListener;
+
+        filteredRecipesList = new ArrayList<>();
+        filteredRecipesList.addAll(allRecipesList);
     }
 
     @NonNull
@@ -34,7 +42,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Recipe recipe = recipesList.get(position);
+        Recipe recipe = filteredRecipesList.get(position);
 
         File imgFile = null;
         if (recipe.imageFileName != null)
@@ -48,11 +56,31 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         }
 
         holder.textViewName.setText(recipe.name);
+
+        holder.itemView.setOnClickListener(v -> onRecipesListItemInteractionListener.onSelectRecipe(recipe));
     }
 
     @Override
     public int getItemCount() {
-        return recipesList.size();
+        return filteredRecipesList.size();
+    }
+
+    public void clearFilter() {
+        filteredRecipesList.clear();
+        filteredRecipesList.addAll(allRecipesList);
+
+        notifyDataSetChanged();
+    }
+
+    public void filter(String pattern) {
+        filteredRecipesList.clear();
+
+        for (Recipe recipe : allRecipesList) {
+            if (recipe.name.toLowerCase().contains(pattern.toLowerCase()))
+                filteredRecipesList.add(recipe);
+        }
+
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
