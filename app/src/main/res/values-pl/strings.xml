@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Książka kucharska</string>
+    <string name="recipe_name">Nazwa przepisu</string>
+    <string name="search">Szukaj</string>
+</resources>
