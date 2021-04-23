@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.List;
 
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements OnRecipesListItem
         recycler.setLayoutManager(gridLayoutManager);
         recycler.setAdapter(recipesAdapter);
 
-        findViewById(R.id.btnAddRecipe).setOnClickListener(v -> {
-            //todo start Activity for new recipe creation
+        findViewById(R.id.btnAddRecipe).setOnClickListener(v ->  {
+            startActivity(new Intent(MainActivity.this, EditAddRecipeActivity.class));
         });
     }
 
