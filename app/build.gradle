@@ -1,6 +1,11 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
+//    id 'com.google.gms.google-services'
+    id 'com.google.secrets_gradle_plugin' version '0.5'
+
 }
+
 
 android {
     compileSdkVersion 29
@@ -54,5 +59,8 @@ dependencies {
 
     implementation ('com.theartofdev.edmodo:android-image-cropper:2.8.0')
     implementation ('com.google.firebase:firebase-ml-vision:24.0.1' ,{exclude group: 'com.google.protobuf'})
+    implementation 'com.google.gms:google-services:4.3.5'
+    //implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    //implementation 'com.google.firebase:firebase-analytics'
 
 }

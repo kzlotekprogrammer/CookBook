@@ -21,8 +21,11 @@ import android.widget.ImageView;
 import pl.cookbook.R;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -40,6 +43,7 @@ public class ImageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
+       // FirebaseApp.initializeApp(getApplicationContext());
 
         buildImageView();
         manageImageCropperButton();
@@ -50,7 +54,7 @@ public class ImageActivity extends AppCompatActivity {
     private void buildImageView() {
         imageCropperBtn = findViewById(R.id.imageCropper_button);
         findText_button = findViewById(R.id.findText_button);
-        camera_imageView = findViewById(R.id.camera_image );
+        camera_imageView = findViewById(R.id.camera_image);
     }
 
 
@@ -59,7 +63,7 @@ public class ImageActivity extends AppCompatActivity {
         findText_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                //findTextOnImage();
+                findTextOnImage();
             }
         });
     }
@@ -96,6 +100,7 @@ public class ImageActivity extends AppCompatActivity {
 
         BitmapDrawable drawable = (BitmapDrawable)camera_imageView.getDrawable();
         Bitmap imageBitmap = drawable.getBitmap();
+
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
 
         FirebaseVisionTextRecognizer textRecognizer;
@@ -109,24 +114,25 @@ public class ImageActivity extends AppCompatActivity {
             Log.i("\nNet", "\nnot Connected");
         }
 
+        Log.i("\nJestem", "\ntuuuuuuuuuuuuuuuu");
+
         textRecognizer.processImage(image)
                 .addOnSuccessListener(result -> {
+                    Log.i("\nJestem w onSuccess", "\njestem\n");
                     String resultText = result.getText();
                     Log.i("\nOCR", resultText);
-                   /* Intent intent = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
-                    intent.putExtra("resultText", resultText);
+               /* Intent intent = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
+                intent.putExtra("resultText", resultText);
 
-                    startActivity(intent);*/
-
+                startActivity(intent);*/
                 })
                 .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Task failed with an exception
-                                Log.i("error OCR", "OCR error");
-                            }
+                        e -> {
+                            // Task failed with an exception
+                            e.printStackTrace();
+                            Log.i("error OCR", "OCR error");
                         });
+        Log.i("\nPo", "\nfunkcjach");
     }
 
 

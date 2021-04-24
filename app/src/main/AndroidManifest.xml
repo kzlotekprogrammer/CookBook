@@ -37,6 +37,11 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ui.EditAddRecipeActivity" />
+
+        <meta-data
+            android:name="com.google.android.vision.API_KEY"
+            android:value="${API_KEY}" />
+
     </application>
 
 </manifest>
