@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +15,7 @@ import pl.cookbook.R;
 public class EditAddRecipeActivity extends AppCompatActivity {
 
     public static final int PICK_IMAGE = 1;
+    private static final int IMAGE_ACTIVITY_REQUEST_CODE = 2;
     Button editImageBtn;
     Button editProductsBtn;
     Button editRecipeBtn;
@@ -63,7 +65,15 @@ public class EditAddRecipeActivity extends AppCompatActivity {
             Intent intent = new Intent(EditAddRecipeActivity.this, ImageActivity.class);
             intent.putExtra("imageUri", imageUri.toString());
             intent.putExtra("requestCode", requestCode);
-            startActivity(intent);
+
+            //todo zweryfikować zmianę
+//            startActivity(intent);
+            startActivityForResult(intent, IMAGE_ACTIVITY_REQUEST_CODE);
+        } else if (requestCode == IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                String text = data.getStringExtra(EditTextActivity.INTENT_TEXT);
+                ((EditText)findViewById(R.id.ProductsEditText)).setText(text);
+            }
         }
     }
 

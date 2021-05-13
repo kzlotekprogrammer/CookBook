@@ -3,4 +3,7 @@
     <string name="app_name">Książka kucharska</string>
     <string name="recipe_name">Nazwa przepisu</string>
     <string name="search">Szukaj</string>
+    <string name="confirm">Potwierdź</string>
+    <string name="cancel">Anuluj</string>
+    <string name="edit_text_activity_title">Edycja tekstu</string>
 </resources>

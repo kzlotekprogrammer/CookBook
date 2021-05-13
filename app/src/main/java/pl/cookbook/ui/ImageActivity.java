@@ -33,6 +33,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class ImageActivity extends AppCompatActivity {
 
+    private static final int EDIT_TEXT_ACTIVITY_REQUEST_CODE = 1;
+
     Button imageCropperBtn;
     Button findText_button;
     ImageView camera_imageView;
@@ -121,6 +123,8 @@ public class ImageActivity extends AppCompatActivity {
                     Log.i("\nJestem w onSuccess", "\njestem\n");
                     String resultText = result.getText();
                     Log.i("\nOCR", resultText);
+                    
+                    startActivityForResult(EditTextActivity.createEditTextActivityIntent(this, resultText), EDIT_TEXT_ACTIVITY_REQUEST_CODE);
                /* Intent intent = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
                 intent.putExtra("resultText", resultText);
 
@@ -160,6 +164,11 @@ public class ImageActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        } else if (requestCode == EDIT_TEXT_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK, data);
+                finish();
             }
         }
     }

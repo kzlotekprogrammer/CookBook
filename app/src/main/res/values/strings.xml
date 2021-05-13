@@ -2,4 +2,7 @@
     <string name="app_name">CookBook</string>
     <string name="recipe_name">Recipe name</string>
     <string name="search">Search</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_text_activity_title">Text edition</string>
 </resources>
