@@ -30,6 +30,8 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import static pl.cookbook.ui.EditAddRecipeActivity.CAMERA_IMAGE;
+
 
 public class ImageActivity extends AppCompatActivity {
 
@@ -70,13 +72,13 @@ public class ImageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int requestCode = intent.getIntExtra("requestCode", 0);
-//
-//        if (requestCode == CAPTURE_IMAGE) {
-//            String currentPhotoPath = intent.getStringExtra("currentPhotoPath");
-//            imageUri =  Uri.parse(intent.getStringExtra("imageUri"));
-//            Bitmap rotatedBitmap = createFinalImage(currentPhotoPath);
-//            camera_imageView.setImageBitmap(rotatedBitmap);
-//        }
+
+        if (requestCode == CAMERA_IMAGE) {
+            String currentPhotoPath = intent.getStringExtra("currentPhotoPath");
+            imageUri =  Uri.parse(intent.getStringExtra("imageUri"));
+            Bitmap rotatedBitmap = createFinalImage(currentPhotoPath);
+            camera_imageView.setImageBitmap(rotatedBitmap);
+        }
 
 
         if (requestCode == EditAddRecipeActivity.PICK_IMAGE){
