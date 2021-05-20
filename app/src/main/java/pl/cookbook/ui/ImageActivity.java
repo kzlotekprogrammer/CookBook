@@ -62,12 +62,7 @@ public class ImageActivity extends AppCompatActivity {
 
     private void manageFindTextButton() {
 
-        findText_button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                findTextOnImage();
-            }
-        });
+        findText_button.setOnClickListener(v -> findTextOnImage());
     }
 
 
