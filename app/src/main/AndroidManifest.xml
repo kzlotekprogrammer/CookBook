@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -38,6 +40,16 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ui.EditAddRecipeActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="pl.cookbook.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
 <!--        <meta-data-->
 <!--            android:name="com.google.android.vision.API_KEY"-->
