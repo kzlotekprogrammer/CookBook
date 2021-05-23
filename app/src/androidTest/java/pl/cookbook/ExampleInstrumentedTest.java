@@ -9,13 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.cookbook.database.AppDatabase;
-import pl.cookbook.database.dao.ProductsDao;
-import pl.cookbook.database.dao.RecipesDao;
-import pl.cookbook.database.entities.Product;
+import pl.cookbook.database.DbHelper;
 import pl.cookbook.database.entities.Recipe;
+import pl.cookbook.database.entities.RecipeProduct;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.junit.Assert.*;
@@ -35,41 +35,49 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void daoTest() {
-        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+    public void recipeSaveAndDeleteTest() {
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        ProductsDao productsDao = db.productsDao();
+        //recipe
+        Recipe newRecipe = new Recipe();
+        newRecipe.name = "newRecipeName";
+        newRecipe.description = "newRecipeDescription";
 
-        Product product = new Product();
-        product.name = "Test1";
+        //2 recipe products
+        List<RecipeProduct> recipeProductList = new ArrayList<>();
+        RecipeProduct recipeProduct = new RecipeProduct();
+        recipeProduct.quantity = 1;
+        recipeProduct.idProduct = 1;
+        recipeProduct.idUnit = 1;
+        recipeProductList.add(recipeProduct);
+        recipeProduct = new RecipeProduct();
+        recipeProduct.quantity = 2;
+        recipeProduct.idProduct = 2;
+        recipeProduct.idUnit = 2;
+        recipeProductList.add(recipeProduct);
 
-        Product product2 = new Product();
-        product.name = "Test2";
+        DbHelper.saveRecipe(appContext, newRecipe, recipeProductList);
 
-        db.productsDao().insertAll(product, product2);
+        AppDatabase appDatabase = AppDatabase.getInstance(appContext);
+        assertNotNull(appDatabase.recipesDao().getByIdRecipe(newRecipe.idRecipe));
+        assertEquals(2, appDatabase.recipeProductsDao().getByIdRecipe(newRecipe.idRecipe).size());
 
-        List<Product> productsList = productsDao.getAll();
-
-        for (Product pro : productsList) {
-            productsDao.delete(pro);
-        }
+        DbHelper.deleteRecipe(appContext, newRecipe.idRecipe);
+        assertNull(appDatabase.recipesDao().getByIdRecipe(newRecipe.idRecipe));
+        assertEquals(0, appDatabase.recipeProductsDao().getByIdRecipe(newRecipe.idRecipe).size());
     }
 
     @Test
-    public void fillDatabaseWithTestRecipes() {
-        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
-        RecipesDao recipesDao = db.recipesDao();
-
-        recipesDao.deleteAll();
-
+    public void add10TestRecipes() {
         File imageFile = new File(getApplicationContext().getFilesDir(), "testImage.jpg");
 
         for (int i = 0; i < 10; i++) {
             Recipe recipe = new Recipe();
-            recipe.name = "Test" + (i + 1);
+            recipe.idRecipe = -i;
+            recipe.name = "Recipe " + (i + 1);
             if (imageFile.exists() && i % 2 == 0)
                 recipe.imageFileName = imageFile.getName();
-            recipesDao.insertAll(recipe);
+            DbHelper.saveRecipe(getApplicationContext(), recipe, new ArrayList<>());
         }
     }
 }

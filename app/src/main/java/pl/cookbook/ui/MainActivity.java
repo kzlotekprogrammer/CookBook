@@ -1,5 +1,6 @@
 package pl.cookbook.ui;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -22,6 +23,7 @@ import pl.cookbook.ui.adapters.RecipesAdapter;
 
 public class MainActivity extends AppCompatActivity implements OnRecipesListItemInteractionListener {
 
+    private static final int EDIT_ADD_RECIPE_REQUEST_CODE = 1;
     List<Recipe> recipesList;
     RecipesAdapter recipesAdapter;
     RecyclerView recycler;
@@ -32,18 +34,13 @@ public class MainActivity extends AppCompatActivity implements OnRecipesListItem
         setContentView(R.layout.activity_main);
 
         recycler = findViewById(R.id.recipesRecyclerView);
-        AppDatabase database = AppDatabase.getInstance(this);
-        recipesList = database.recipesDao().getAll();
-        recipesAdapter = new RecipesAdapter(recipesList, this);
-
-        setFilter(getIntent());
-
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         recycler.setLayoutManager(gridLayoutManager);
-        recycler.setAdapter(recipesAdapter);
+
+        refresh();
 
         findViewById(R.id.btnAddRecipe).setOnClickListener(v ->  {
-            startActivity(new Intent(MainActivity.this, EditAddRecipeActivity.class));
+            startActivityForResult(EditAddRecipeActivity.createEditAddRecipeActivityIntent(this, 0), EDIT_ADD_RECIPE_REQUEST_CODE);
         });
     }
 
@@ -92,6 +89,25 @@ public class MainActivity extends AppCompatActivity implements OnRecipesListItem
 
     @Override
     public void onSelectRecipe(Recipe recipe) {
-        //todo start Activity for recipe
+        startActivityForResult(EditAddRecipeActivity.createEditAddRecipeActivityIntent(this, recipe.idRecipe), EDIT_ADD_RECIPE_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_ADD_RECIPE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                refresh();
+            }
+        }
+    }
+
+    private void refresh() {
+        AppDatabase database = AppDatabase.getInstance(this);
+        recipesList = database.recipesDao().getAll();
+        recipesAdapter = new RecipesAdapter(recipesList, this);
+        setFilter(getIntent());
+        recycler.setAdapter(recipesAdapter);
     }
 }

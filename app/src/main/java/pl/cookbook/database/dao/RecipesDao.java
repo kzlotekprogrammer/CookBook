@@ -1,9 +1,9 @@
 package pl.cookbook.database.dao;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -14,12 +14,15 @@ public interface RecipesDao {
     @Query("SELECT * FROM Recipe")
     List<Recipe> getAll();
 
+    @Query("SELECT * FROM Recipe WHERE idRecipe=:idRecipe")
+    Recipe getByIdRecipe(long idRecipe);
+
     @Insert
-    void insertAll(Recipe... recipes);
+    long insert(Recipe recipe);
 
-    @Delete
-    void delete(Recipe recipe);
+    @Update
+    int update(Recipe recipe);
 
-    @Query("DELETE FROM Recipe")
-    void deleteAll();
+    @Query("DELETE FROM Recipe WHERE idRecipe=:idRecipe")
+    void deleteByIdRecipe(long idRecipe);
 }

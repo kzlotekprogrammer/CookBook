@@ -72,15 +72,23 @@
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteY="560dp" />
 
-            <EditText
-                android:id="@+id/ProductsEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textMultiLine"
-                android:text="składniki"
-                android:nestedScrollingEnabled="true"/>
+<!--            <EditText-->
+<!--                android:id="@+id/ProductsEditText"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:ems="10"-->
+<!--                android:inputType="textMultiLine"-->
+<!--                android:text="składniki"-->
+<!--                android:nestedScrollingEnabled="true"/>-->
 
+            <TextView
+                android:id="@+id/productsListLabel"
+                android:text="@string/product_list"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/productsList"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
 
             <EditText
                 android:id="@+id/executionEditText"
@@ -90,6 +98,12 @@
                 android:inputType="textMultiLine"
                 android:text="wykonanie"
                 tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/btnSaveRecipe"
+                android:text="@string/save_recipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </TableLayout>
 

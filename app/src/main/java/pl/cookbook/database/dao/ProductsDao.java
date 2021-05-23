@@ -1,9 +1,9 @@
 package pl.cookbook.database.dao;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -14,12 +14,15 @@ public interface ProductsDao {
     @Query("SELECT * FROM Product")
     List<Product> getAll();
 
+    @Query("SELECT * FROM Product WHERE idProduct=:idProduct")
+    Product getByIdProduct(long idProduct);
+
     @Insert
-    void insertAll(Product... products);
+    long insert(Product product);
 
-    @Delete
-    void delete(Product product);
+    @Update
+    int update(Product product);
 
-    @Query("DELETE FROM Product")
-    void deleteAll();
+    @Query("DELETE FROM Product WHERE idProduct=:idProduct")
+    void deleteByIdProduct(long idProduct);
 }

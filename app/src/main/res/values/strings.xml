@@ -5,4 +5,16 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="edit_text_activity_title">Text edition</string>
+    <string name="edit_text_correct_typo">Popraw literówki</string>
+    <string name="edit_text_new_product_name">Nazwa nowego produktu</string>
+    <string name="edit_text_edit_product_name">Edycja nazwy produktu</string>
+    <string name="how_do_you_want_to_create_a_new_product">Jak chcesz utworzyć nowy produkt</string>
+    <string name="text_scan">Skanowanie tekstu</string>
+    <string name="typing">Wpisanie</string>
+    <string name="adding_method">Metoda wprowadzania</string>
+    <string name="product_list">Lista produktów</string>
+    <string name="save_recipe">Zapisz przepis</string>
+    <string name="select_product">Wybierz produkt</string>
+    <string name="product_name">Nazwa produktu</string>
+<!--    todo tłumaczenia-->
 </resources>

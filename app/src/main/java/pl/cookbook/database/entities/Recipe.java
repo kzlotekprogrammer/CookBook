@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Recipe {
     @PrimaryKey(autoGenerate = true)
-    public int idRecipe;
+    public long idRecipe;
 
     public String name;
 
