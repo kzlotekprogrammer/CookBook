@@ -1,9 +1,9 @@
 package pl.cookbook.database.dao;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -14,12 +14,15 @@ public interface UnitsDao {
     @Query("SELECT * FROM Unit")
     List<Unit> getAll();
 
+    @Query("SELECT * FROM Unit WHERE idUnit=:idUnit")
+    Unit getByIdUnit(long idUnit);
+
     @Insert
-    void insertAll(Unit... units);
+    long insert(Unit unit);
 
-    @Delete
-    void delete(Unit unit);
+    @Update
+    int update(Unit unit);
 
-    @Query("DELETE FROM Unit")
-    void deleteAll();
+    @Query("DELETE FROM Unit WHERE idUnit=:idUnit")
+    void deleteByIdUnit(long idUnit);
 }

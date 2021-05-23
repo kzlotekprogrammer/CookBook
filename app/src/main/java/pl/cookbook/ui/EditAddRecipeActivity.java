@@ -1,5 +1,6 @@
 package pl.cookbook.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +13,11 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.FileProvider;
+
+import java.util.List;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,17 +26,41 @@ import java.util.Date;
 import java.util.Locale;
 
 import pl.cookbook.R;
+import pl.cookbook.database.AppDatabase;
+import pl.cookbook.database.DbHelper;
+import pl.cookbook.database.dao.ProductsDao;
+import pl.cookbook.database.entities.Product;
+import pl.cookbook.database.entities.Recipe;
+import pl.cookbook.database.entities.RecipeProduct;
+import pl.cookbook.ui.adapters.RecipeProductsAdapter;
 
-public class EditAddRecipeActivity extends AppCompatActivity {
+//todo rozszerzyć widok elementu na liście produktów o wybór jednosktki i ilości
 
+public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipeProductListInteractionListener {
+    
+    private static final String INTENT_ID_RECIPE = "idRecipe";
     public static final int PICK_IMAGE = 1;
     private static final int IMAGE_ACTIVITY_REQUEST_CODE = 2;
-    public static final int CAMERA_IMAGE = 3;
+    private static final int ADD_PRODUCT_REQUEST_CODE = 3;
+    public static final int CAMERA_IMAGE = 4;
 
     Button editImageBtn;
     Button editProductsBtn;
     Button editRecipeBtn;
     Uri imageUri;
+    RecyclerView recycler;
+
+    Recipe recipe;
+    List<RecipeProduct> recipeProductList;
+
+    EditText titleEditText;
+    EditText executionEditText;
+
+    public static Intent createEditAddRecipeActivityIntent(final Context context, final long idRecipe) {
+        Intent intent = new Intent(context, EditAddRecipeActivity.class);
+        intent.putExtra(INTENT_ID_RECIPE, idRecipe);
+        return  intent;
+    }
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -50,6 +79,45 @@ public class EditAddRecipeActivity extends AppCompatActivity {
     }
 
     private void buildActivity() {
+        AppDatabase appDatabase = AppDatabase.getInstance(this);
+        Intent intent = getIntent();
+        long idRecipe = intent.getLongExtra(INTENT_ID_RECIPE, 0);
+        if (idRecipe != 0)
+            recipe = appDatabase.recipesDao().getByIdRecipe(idRecipe);
+
+        //if new recipe
+        if (recipe == null)
+            recipe = new Recipe();
+        recipeProductList = appDatabase.recipeProductsDao().getByIdRecipe(recipe.idRecipe);
+
+        recycler = findViewById(R.id.productsList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recycler.setLayoutManager(linearLayoutManager);
+
+        titleEditText = findViewById(R.id.titleEditText);
+        titleEditText.setText(recipe.name);
+        executionEditText = findViewById(R.id.executionEditText);
+        executionEditText.setText(recipe.description);
+
+        //todo recipe.imageFileName - ustawienie zdjęcia w imageView
+
+        findViewById(R.id.btnSaveRecipe).setOnClickListener(v -> {
+            recipe.name = titleEditText.getText().toString();
+            recipe.description = executionEditText.getText().toString();
+            //todo zapis ścieżki do zdjęcia
+
+            DbHelper.saveRecipe(this, recipe, recipeProductList);
+            setResult(RESULT_OK);
+            finish();
+        });
+
+        ProductsDao productsDao = appDatabase.productsDao();
+        for (RecipeProduct recipeProduct : recipeProductList) {
+            Product product = productsDao.getByIdProduct(recipeProduct.idProduct);
+            recipeProduct.productName = product.name;
+        }
+
+        refreshProductsList();
 
         editImageBtn = findViewById(R.id.editImageBtn);
         editImageBtn.setOnClickListener(v -> {
@@ -57,7 +125,9 @@ public class EditAddRecipeActivity extends AppCompatActivity {
         });
         editProductsBtn = findViewById(R.id.editProductsBtn);
         editProductsBtn.setOnClickListener(v -> {
-            createChooseCameraGalleryDialog();
+//            Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+//            startActivityForResult(gallery, PICK_IMAGE);
+            startActivityForResult(new Intent(this, ProductsListActivity.class), ADD_PRODUCT_REQUEST_CODE);
         });
 
         editRecipeBtn = findViewById(R.id.editRecipeBtn);
@@ -85,15 +155,43 @@ public class EditAddRecipeActivity extends AppCompatActivity {
             intent.putExtra("imageUri", imageUri.toString());
             intent.putExtra("requestCode", requestCode);
 
-            //todo zweryfikować zmianę
-//            startActivity(intent);
             startActivityForResult(intent, IMAGE_ACTIVITY_REQUEST_CODE);
         } else if (requestCode == IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String text = data.getStringExtra(EditTextActivity.INTENT_TEXT);
-                ((EditText)findViewById(R.id.ProductsEditText)).setText(text);
+                //todo
+//                ((EditText)findViewById(R.id.ProductsEditText)).setText(text);
+            }
+        } else if (requestCode == ADD_PRODUCT_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                long idProduct = data.getLongExtra(ProductsListActivity.INTENT_PRODUCT_ID, 0);
+                for (RecipeProduct recipeProduct : recipeProductList) {
+                    if (recipeProduct.idProduct == idProduct) {
+                        //todo wyświetlić dialog z informacją, że już dodany
+                        return;
+                    }
+                }
+
+                Product product = AppDatabase.getInstance(this).productsDao().getByIdProduct(idProduct);
+                RecipeProduct recipeProduct = new RecipeProduct();
+                recipeProduct.idRecipe = recipe.idRecipe;
+                recipeProduct.idProduct = idProduct;
+                recipeProduct.productName = product.name;
+                recipeProductList.add(recipeProduct);
+                refreshProductsList();
             }
         }
+    }
+
+
+    private void refreshProductsList() {
+        recycler.setAdapter(new RecipeProductsAdapter(this, recipeProductList, this));
+    }
+
+    @Override
+    public void onDeleteRecipeProduct(RecipeProduct recipeProduct) {
+        recipeProductList.remove(recipeProduct);
+        refreshProductsList();
     }
 
     public void createChooseCameraGalleryDialog(){
@@ -155,5 +253,4 @@ public class EditAddRecipeActivity extends AppCompatActivity {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
-
 }

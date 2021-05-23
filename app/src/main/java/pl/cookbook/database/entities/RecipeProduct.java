@@ -1,14 +1,18 @@
 package pl.cookbook.database.entities;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 @Entity(primaryKeys = {"idRecipe", "idProduct"})
 public class RecipeProduct {
-    public int idRecipe;
+    public long idRecipe;
 
-    public int idProduct;
+    public long idProduct;
 
-    public int idUnit;
+    public long idUnit;
 
     public int quantity;
+
+    @Ignore
+    public String productName;
 }

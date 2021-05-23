@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Unit {
     @PrimaryKey(autoGenerate = true)
-    public int idUnit;
+    public long idUnit;
 
     public String name;
 }

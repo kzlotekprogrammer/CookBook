@@ -12,11 +12,13 @@ import pl.cookbook.R;
 
 public class EditTextActivity extends AppCompatActivity {
 
+    private static String INTENT_TITLE_STRING_RESOURCE_ID = "title";
     public static String INTENT_TEXT = "text";
 
-    public static Intent createEditTextActivityIntent(final Context context, final String text) {
+    public static Intent createEditTextActivityIntent(final Context context, final int titleResourceId, final String text) {
         Intent intent = new Intent(context, EditTextActivity.class);
         intent.putExtra(INTENT_TEXT, text);
+        intent.putExtra(INTENT_TITLE_STRING_RESOURCE_ID, titleResourceId);
         return  intent;
     }
 
@@ -30,6 +32,7 @@ public class EditTextActivity extends AppCompatActivity {
         editText = findViewById(R.id.editText);
 
         Intent intent = getIntent();
+        setTitle(intent.getIntExtra(INTENT_TITLE_STRING_RESOURCE_ID, 0));
         editText.setText(intent.getStringExtra(INTENT_TEXT));
 
         findViewById(R.id.btnConfirm).setOnClickListener(v -> {
@@ -43,10 +46,5 @@ public class EditTextActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
             finish();
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        //prevent closing activity
     }
 }

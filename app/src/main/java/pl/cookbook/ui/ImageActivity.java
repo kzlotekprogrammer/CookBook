@@ -121,7 +121,7 @@ public class ImageActivity extends AppCompatActivity {
                     String resultText = result.getText();
                     Log.i("\nOCR", resultText);
                     
-                    startActivityForResult(EditTextActivity.createEditTextActivityIntent(this, resultText), EDIT_TEXT_ACTIVITY_REQUEST_CODE);
+                    startActivityForResult(EditTextActivity.createEditTextActivityIntent(this, R.string.edit_text_correct_typo, resultText), EDIT_TEXT_ACTIVITY_REQUEST_CODE);
                /* Intent intent = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
                 intent.putExtra("resultText", resultText);
 
