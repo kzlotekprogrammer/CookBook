@@ -11,7 +11,7 @@ public class RecipeProduct {
 
     public long idUnit;
 
-    public int quantity;
+    public double quantity;
 
     @Ignore
     public String productName;
