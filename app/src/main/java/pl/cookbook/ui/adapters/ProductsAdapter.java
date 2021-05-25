@@ -14,7 +14,7 @@ import java.util.List;
 
 import pl.cookbook.R;
 import pl.cookbook.database.entities.Product;
-import pl.cookbook.ui.OnProductsListItemInteractionListener;
+import pl.cookbook.ui.listeners.OnProductsListItemInteractionListener;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
     private final List<Product> allProductsList;

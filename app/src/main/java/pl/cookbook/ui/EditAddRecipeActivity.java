@@ -32,7 +32,9 @@ import pl.cookbook.database.dao.ProductsDao;
 import pl.cookbook.database.entities.Product;
 import pl.cookbook.database.entities.Recipe;
 import pl.cookbook.database.entities.RecipeProduct;
+import pl.cookbook.database.entities.Unit;
 import pl.cookbook.ui.adapters.RecipeProductsAdapter;
+import pl.cookbook.ui.listeners.OnRecipeProductListInteractionListener;
 
 //todo rozszerzyć widok elementu na liście produktów o wybór jednosktki i ilości
 
@@ -52,6 +54,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
 
     Recipe recipe;
     List<RecipeProduct> recipeProductList;
+    List<Unit> unitList;
 
     EditText titleEditText;
     EditText executionEditText;
@@ -89,6 +92,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         if (recipe == null)
             recipe = new Recipe();
         recipeProductList = appDatabase.recipeProductsDao().getByIdRecipe(recipe.idRecipe);
+        unitList = appDatabase.unitsDao().getAll();
 
         recycler = findViewById(R.id.productsList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -183,9 +187,8 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         }
     }
 
-
     private void refreshProductsList() {
-        recycler.setAdapter(new RecipeProductsAdapter(this, recipeProductList, this));
+        recycler.setAdapter(new RecipeProductsAdapter(this, recipeProductList, unitList, this));
     }
 
     @Override

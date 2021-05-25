@@ -17,7 +17,7 @@ import java.util.List;
 
 import pl.cookbook.R;
 import pl.cookbook.database.entities.Recipe;
-import pl.cookbook.ui.OnRecipesListItemInteractionListener;
+import pl.cookbook.ui.listeners.OnRecipesListItemInteractionListener;
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHolder> {
     private final List<Recipe> allRecipesList;

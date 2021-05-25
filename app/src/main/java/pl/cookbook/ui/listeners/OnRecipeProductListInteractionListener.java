@@ -1,4 +1,4 @@
-package pl.cookbook.ui;
+package pl.cookbook.ui.listeners;
 
 import pl.cookbook.database.entities.RecipeProduct;
 

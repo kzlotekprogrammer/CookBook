@@ -20,6 +20,9 @@ public interface UnitsDao {
     @Insert
     long insert(Unit unit);
 
+    @Insert
+    List<Long> insertAll(Unit... units);
+
     @Update
     int update(Unit unit);
 

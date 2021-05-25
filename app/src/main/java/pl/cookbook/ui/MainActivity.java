@@ -20,6 +20,7 @@ import pl.cookbook.R;
 import pl.cookbook.database.AppDatabase;
 import pl.cookbook.database.entities.Recipe;
 import pl.cookbook.ui.adapters.RecipesAdapter;
+import pl.cookbook.ui.listeners.OnRecipesListItemInteractionListener;
 
 public class MainActivity extends AppCompatActivity implements OnRecipesListItemInteractionListener {
 

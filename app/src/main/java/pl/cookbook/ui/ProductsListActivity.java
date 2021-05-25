@@ -21,6 +21,7 @@ import pl.cookbook.R;
 import pl.cookbook.database.AppDatabase;
 import pl.cookbook.database.entities.Product;
 import pl.cookbook.ui.adapters.ProductsAdapter;
+import pl.cookbook.ui.listeners.OnProductsListItemInteractionListener;
 
 //todo edycja produktu
 //todo obsłużenie skanowania
