@@ -23,7 +23,6 @@ import pl.cookbook.database.entities.Product;
 import pl.cookbook.ui.adapters.ProductsAdapter;
 import pl.cookbook.ui.listeners.OnProductsListItemInteractionListener;
 
-//todo edycja produktu
 //todo obsłużenie skanowania
 
 public class ProductsListActivity extends AppCompatActivity implements OnProductsListItemInteractionListener {
@@ -33,7 +32,9 @@ public class ProductsListActivity extends AppCompatActivity implements OnProduct
 
     public static final String INTENT_PRODUCT_ID = "productId";
 
-    private static final int ADD_NEW_PRODUCT_REQUEST_CODE = 2;
+    private static final int ADD_NEW_PRODUCT_REQUEST_CODE = 1;
+    private static final int EDIT_PRODUCT_REQUEST_CODE = 2;
+    private Product currentProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,22 @@ public class ProductsListActivity extends AppCompatActivity implements OnProduct
                     }
                 }
             }
+        } else if (requestCode == EDIT_PRODUCT_REQUEST_CODE) {
+            if (currentProduct == null)
+                return;
+
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    String productName = data.getStringExtra(EditTextActivity.INTENT_TEXT);
+                    if (productName != null && productName.length() > 0) {
+                        currentProduct.name = productName;
+                        AppDatabase.getInstance(this).productsDao().update(currentProduct);
+                        refresh();
+                    }
+                }
+            }
+
+            currentProduct = null;
         }
     }
 
@@ -152,16 +169,31 @@ public class ProductsListActivity extends AppCompatActivity implements OnProduct
 
     @Override
     public void onDeleteProduct(Product product) {
-
         AppDatabase appDatabase = AppDatabase.getInstance(this);
         int recipeProductsCount = appDatabase.recipeProductsDao().getByIdProduct(product.idProduct).size();
 
+        AlertDialog alertDialog;
         if (recipeProductsCount > 0) {
-            //todo usuwanie produktow w istniejacych przepisach
-//            AlertDialog alertDialog = new AlertDialog.Builder(this);
+            alertDialog = new AlertDialog.Builder(this)
+                    .setTitle(String.format(getString(R.string.product_cannot_be_removed), recipeProductsCount))
+                    .setPositiveButton(R.string.ok, null)
+                    .create();
+        } else {
+            alertDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.confirm_deletion_product)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        AppDatabase.getInstance(this).productsDao().deleteByIdProduct(product.idProduct);
+                        refresh();
+                    })
+                    .setNegativeButton(R.string.no, null)
+                    .create();
         }
+        alertDialog.show();
+    }
 
-        AppDatabase.getInstance(this).productsDao().deleteByIdProduct(product.idProduct);
-        refresh();
+    @Override
+    public void onEditProduct(Product product) {
+        currentProduct = product;
+        startActivityForResult(EditTextActivity.createEditTextActivityIntent(this, R.string.edit_product, product.name), EDIT_PRODUCT_REQUEST_CODE);
     }
 }
