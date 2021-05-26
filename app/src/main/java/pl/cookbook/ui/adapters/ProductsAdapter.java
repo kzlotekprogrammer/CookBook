@@ -46,6 +46,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         holder.textViewName.setOnClickListener(v -> onProductsListItemInteractionListener.onSelectProduct(product));
 
         holder.imageViewDelete.setOnClickListener(v -> onProductsListItemInteractionListener.onDeleteProduct(product));
+
+        holder.textViewName.setOnCreateContextMenuListener((menu, v, menuInfo) -> menu.add(9, v.getId(), 0, R.string.edit_product)
+                .setOnMenuItemClickListener(item -> {
+                    onProductsListItemInteractionListener.onEditProduct(product);
+                    return true;
+                }));
     }
 
     @Override
@@ -71,7 +77,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         View itemView;
         TextView textViewName;
         ImageView imageViewDelete;

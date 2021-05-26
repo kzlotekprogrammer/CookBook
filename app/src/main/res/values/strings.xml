@@ -17,5 +17,12 @@
     <string name="select_product">Wybierz produkt</string>
     <string name="product_name">Nazwa produktu</string>
     <string name="invalid_value">Niepoprawna wartość</string>
+    <string name="confirm_deletion_product">Czy na pewno chcesz usunąć ten produkt?</string>
+    <string name="product_cannot_be_removed">Nie można usunąć produktu ponieważ znajduje się w %d przepisach</string>
+    <string name="yes">Tak</string>
+    <string name="ok">Ok</string>
+    <string name="no">Nie</string>
+    <string name="product_already_added">Produkt już dodany!</string>
+    <string name="edit_product">Edytuj produkt</string>
     <!--    todo tłumaczenia-->
 </resources>

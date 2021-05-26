@@ -2,6 +2,7 @@ package pl.cookbook.database;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -28,7 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
             instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DB_NAME)
                     .allowMainThreadQueries()
                     .addCallback(new RoomDatabase.Callback() {
-                        public void onCreate (SupportSQLiteDatabase db) {
+                        public void onCreate (@NonNull SupportSQLiteDatabase db) {
                             super.onCreate(db);
                             Executors.newSingleThreadScheduledExecutor().execute(() -> getInstance(context).unitsDao().insertAll(Unit.populateData()));
                         }

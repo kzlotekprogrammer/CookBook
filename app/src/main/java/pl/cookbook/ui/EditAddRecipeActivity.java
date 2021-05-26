@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.FileProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.io.File;
@@ -35,8 +36,6 @@ import pl.cookbook.database.entities.RecipeProduct;
 import pl.cookbook.database.entities.Unit;
 import pl.cookbook.ui.adapters.RecipeProductsAdapter;
 import pl.cookbook.ui.listeners.OnRecipeProductListInteractionListener;
-
-//todo rozszerzyć widok elementu na liście produktów o wybór jednosktki i ilości
 
 public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipeProductListInteractionListener {
     
@@ -169,25 +168,49 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         } else if (requestCode == ADD_PRODUCT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 long idProduct = data.getLongExtra(ProductsListActivity.INTENT_PRODUCT_ID, 0);
+                boolean alreadyAdded = false;
                 for (RecipeProduct recipeProduct : recipeProductList) {
                     if (recipeProduct.idProduct == idProduct) {
-                        //todo wyświetlić dialog z informacją, że już dodany
-                        return;
+                        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                                .setTitle(R.string.product_already_added)
+                                .setPositiveButton(R.string.ok, null)
+                                .create();
+                        alertDialog.show();
+                        alreadyAdded = true;
+                        break;
                     }
                 }
 
-                Product product = AppDatabase.getInstance(this).productsDao().getByIdProduct(idProduct);
-                RecipeProduct recipeProduct = new RecipeProduct();
-                recipeProduct.idRecipe = recipe.idRecipe;
-                recipeProduct.idProduct = idProduct;
-                recipeProduct.productName = product.name;
-                recipeProductList.add(recipeProduct);
-                refreshProductsList();
+                if (!alreadyAdded) {
+                    Product product = AppDatabase.getInstance(this).productsDao().getByIdProduct(idProduct);
+                    RecipeProduct recipeProduct = new RecipeProduct();
+                    recipeProduct.idRecipe = recipe.idRecipe;
+                    recipeProduct.idProduct = idProduct;
+                    recipeProduct.productName = product.name;
+                    recipeProductList.add(recipeProduct);
+                }
             }
+
+            refreshProductsList();
         }
     }
 
     private void refreshProductsList() {
+        ProductsDao productsDao = AppDatabase.getInstance(this).productsDao();
+
+        List<RecipeProduct> toRemove = new ArrayList<>();
+        for (RecipeProduct recipeProduct : recipeProductList) {
+            Product product = productsDao.getByIdProduct(recipeProduct.idProduct);
+            if (product == null)
+                toRemove.add(recipeProduct);
+            else
+                recipeProduct.productName = product.name;
+        }
+
+        for (RecipeProduct recipeProduct : toRemove) {
+            recipeProductList.remove(recipeProduct);
+        }
+
         recycler.setAdapter(new RecipeProductsAdapter(this, recipeProductList, unitList, this));
     }
 

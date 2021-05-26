@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CookBook">
-        <activity android:name=".ui.ProductsListActivity"
+        <activity
+            android:name=".ui.ProductsListActivity"
             android:label="@string/select_product"
             android:launchMode="singleTop">
             <intent-filter>
