@@ -55,7 +55,10 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
             holder.imageView.setImageResource(R.drawable.ic_baseline_local_dining_96);
         }
 
-        holder.textViewName.setText(recipe.name);
+        if (recipe.name.length() > 20)
+            holder.textViewName.setText(String.format("%s...", recipe.name.substring(0, 17)));
+        else
+            holder.textViewName.setText(recipe.name);
 
         holder.itemView.setOnClickListener(v -> onRecipesListItemInteractionListener.onSelectRecipe(recipe));
     }
