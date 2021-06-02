@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,12 +41,15 @@ import pl.cookbook.ui.listeners.OnRecipeProductListInteractionListener;
 
 public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipeProductListInteractionListener {
     
-    private static final String INTENT_ID_RECIPE = "idRecipe";
+    public static final String INTENT_ID_RECIPE = "idRecipe";
+    public static final String IMAGE_URI = "imageUri";
     public static final int PICK_IMAGE = 1;
     private static final int IMAGE_ACTIVITY_REQUEST_CODE = 2;
     private static final int ADD_PRODUCT_REQUEST_CODE = 3;
     public static final int CAMERA_IMAGE = 4;
+    public int ADD_RECIPE_PHOTO = 0;
 
+    ImageView recipePhotoImageView;
     Button editImageBtn;
     Button editProductsBtn;
     Button editRecipeBtn;
@@ -61,7 +66,14 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
     public static Intent createEditAddRecipeActivityIntent(final Context context, final long idRecipe) {
         Intent intent = new Intent(context, EditAddRecipeActivity.class);
         intent.putExtra(INTENT_ID_RECIPE, idRecipe);
-        return  intent;
+        return intent;
+    }
+
+    public static Intent createEditAddRecipeActivityIntentWithImageUri(final Context context, final long idRecipe, String imageUri){
+        Intent intent = new Intent(context, EditAddRecipeActivity.class);
+        intent.putExtra(INTENT_ID_RECIPE, idRecipe);
+        intent.putExtra(IMAGE_URI, imageUri);
+        return intent;
     }
 
     private AlertDialog.Builder dialogBuilder;
@@ -102,16 +114,29 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         executionEditText = findViewById(R.id.executionEditText);
         executionEditText.setText(recipe.description);
 
-        //todo recipe.imageFileName - ustawienie zdjęcia w imageView
+        String photoPath = intent.getStringExtra(IMAGE_URI);
+        recipePhotoImageView = findViewById(R.id.recipeEditAddImage);
+        if(photoPath != null) {
+            recipePhotoImageView.setImageURI(Uri.parse(photoPath));
+        }
+        else if(recipe.imageFileName != null){
+            recipePhotoImageView.setImageURI(Uri.parse(recipe.imageFileName));
+        }
+
 
         findViewById(R.id.btnSaveRecipe).setOnClickListener(v -> {
             recipe.name = titleEditText.getText().toString();
             recipe.description = executionEditText.getText().toString();
-            //todo zapis ścieżki do zdjęcia
+            if(photoPath != null) {
+                recipe.imageFileName = photoPath;
+            }
+
 
             DbHelper.saveRecipe(this, recipe, recipeProductList);
             setResult(RESULT_OK);
             finish();
+
+            startActivity(new Intent(EditAddRecipeActivity.this, MainActivity.class));
         });
 
         ProductsDao productsDao = appDatabase.productsDao();
@@ -124,12 +149,11 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
 
         editImageBtn = findViewById(R.id.editImageBtn);
         editImageBtn.setOnClickListener(v -> {
+            ADD_RECIPE_PHOTO = 1;
             createChooseCameraGalleryDialog();
         });
         editProductsBtn = findViewById(R.id.editProductsBtn);
         editProductsBtn.setOnClickListener(v -> {
-//            Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-//            startActivityForResult(gallery, PICK_IMAGE);
             startActivityForResult(new Intent(this, ProductsListActivity.class), ADD_PRODUCT_REQUEST_CODE);
         });
 
@@ -145,9 +169,15 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         if (requestCode == CAMERA_IMAGE && resultCode == RESULT_OK) {
 
             Intent intent = new Intent(EditAddRecipeActivity.this, ImageActivity.class);
-            intent.putExtra("imageUri", photoUri.toString());
+            intent.putExtra(IMAGE_URI, photoUri.toString());
             intent.putExtra("requestCode", requestCode);
             intent.putExtra("currentPhotoPath", currentPhotoPath);
+            intent.putExtra("ADD_RECIPE_PHOTO", ADD_RECIPE_PHOTO);
+
+            Intent intentThis = getIntent();
+            long idRecipe = intentThis.getLongExtra(INTENT_ID_RECIPE, 0);
+            intent.putExtra(INTENT_ID_RECIPE, idRecipe);
+
             startActivity(intent);
         }
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK){
@@ -155,10 +185,16 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
             imageUri = data.getData();
 
             Intent intent = new Intent(EditAddRecipeActivity.this, ImageActivity.class);
-            intent.putExtra("imageUri", imageUri.toString());
+            intent.putExtra(IMAGE_URI, imageUri.toString());
             intent.putExtra("requestCode", requestCode);
+            intent.putExtra("ADD_RECIPE_PHOTO", ADD_RECIPE_PHOTO);
+
+            Intent intentThis = getIntent();
+            long idRecipe = intentThis.getLongExtra(INTENT_ID_RECIPE, 0);
+            intent.putExtra(INTENT_ID_RECIPE, idRecipe);
 
             startActivityForResult(intent, IMAGE_ACTIVITY_REQUEST_CODE);
+
         } else if (requestCode == IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String text = data.getStringExtra(EditTextActivity.INTENT_TEXT);
@@ -244,7 +280,6 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
     private void openCamera() {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
@@ -259,6 +294,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
             if (photoFile != null) {
                 photoUri = FileProvider.getUriForFile(EditAddRecipeActivity.this, "pl.cookbook.fileprovider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+
                 startActivityForResult(takePictureIntent, CAMERA_IMAGE);
             }
         }

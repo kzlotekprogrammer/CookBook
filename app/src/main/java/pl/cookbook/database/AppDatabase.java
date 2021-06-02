@@ -19,7 +19,7 @@ import pl.cookbook.database.entities.Recipe;
 import pl.cookbook.database.entities.RecipeProduct;
 import pl.cookbook.database.entities.Unit;
 
-@Database(entities = {Product.class, Recipe.class, RecipeProduct.class, Unit.class}, version = 1, exportSchema = false)
+@Database(entities = {Product.class, Recipe.class, RecipeProduct.class, Unit.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DB_NAME = "cookBook.db";
     private static AppDatabase instance;

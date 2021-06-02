@@ -1,6 +1,5 @@
 package pl.cookbook.ui;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -14,33 +13,35 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import pl.cookbook.R;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import static pl.cookbook.ui.EditAddRecipeActivity.CAMERA_IMAGE;
+import static pl.cookbook.ui.EditAddRecipeActivity.IMAGE_URI;
+import static pl.cookbook.ui.EditAddRecipeActivity.INTENT_ID_RECIPE;
+import static pl.cookbook.ui.MainActivity.EDIT_ADD_RECIPE_REQUEST_CODE;
 
 
 public class ImageActivity extends AppCompatActivity {
 
     private static final int EDIT_TEXT_ACTIVITY_REQUEST_CODE = 1;
+    public static final String ADD_RECIPE_PHOTO = "ADD_RECIPE_PHOTO";
+
 
     Button imageCropperBtn;
-    Button findText_button;
-    ImageView camera_imageView;
+    Button findTextBtn;
+    Button addRecipePhoto;
+    ImageView photoImageView;
 
+    Intent intent;
     Uri imageUri;
 
     @Override
@@ -48,42 +49,64 @@ public class ImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
        // FirebaseApp.initializeApp(getApplicationContext());
+        intent = getIntent();
 
         buildImageView();
         manageImageCropperButton();
         manageImage();
-        manageFindTextButton();
+
+        if(intent.getIntExtra(ADD_RECIPE_PHOTO, 0) == 1)
+            manageAddRecipePhotoButton();
+        else
+            manageFindTextButton();
     }
 
     private void buildImageView() {
         imageCropperBtn = findViewById(R.id.imageCropper_button);
-        findText_button = findViewById(R.id.findText_button);
-        camera_imageView = findViewById(R.id.camera_image);
+        photoImageView = findViewById(R.id.camera_image);
+
+        if(intent.getIntExtra(ADD_RECIPE_PHOTO, 0) == 1)
+            addRecipePhoto = findViewById(R.id.addRecipePhoto_button);
+        else
+            findTextBtn = findViewById(R.id.findText_button);
     }
 
 
     private void manageFindTextButton() {
 
-        findText_button.setOnClickListener(v -> findTextOnImage());
+        findTextBtn.setOnClickListener(v -> findTextOnImage());
+    }
+
+    private void manageAddRecipePhotoButton(){
+
+        addRecipePhoto.setOnClickListener(v -> {
+            /*String imageUriString = intent.getStringExtra("imageUri");
+            Intent intent1 = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
+            intent1.putExtra("imageUri", imageUriString);
+            startActivity(intent1);*/
+
+            long idRecipe = intent.getLongExtra(INTENT_ID_RECIPE, 0);
+            startActivityForResult(EditAddRecipeActivity.createEditAddRecipeActivityIntentWithImageUri(this, idRecipe, imageUri.toString()), EDIT_ADD_RECIPE_REQUEST_CODE);
+
+        });
     }
 
 
     private void manageImage() {
 
-        Intent intent = getIntent();
         int requestCode = intent.getIntExtra("requestCode", 0);
 
         if (requestCode == CAMERA_IMAGE) {
             String currentPhotoPath = intent.getStringExtra("currentPhotoPath");
-            imageUri =  Uri.parse(intent.getStringExtra("imageUri"));
+            imageUri =  Uri.parse(intent.getStringExtra(IMAGE_URI));
             Bitmap rotatedBitmap = createFinalImage(currentPhotoPath);
-            camera_imageView.setImageBitmap(rotatedBitmap);
+            photoImageView.setImageBitmap(rotatedBitmap);
         }
 
 
         if (requestCode == EditAddRecipeActivity.PICK_IMAGE){
-            imageUri = Uri.parse(intent.getStringExtra("imageUri"));
-            camera_imageView.setImageURI(imageUri);
+            imageUri = Uri.parse(intent.getStringExtra(IMAGE_URI));
+            photoImageView.setImageURI(imageUri);
         }
     }
 
@@ -97,7 +120,7 @@ public class ImageActivity extends AppCompatActivity {
 
     private void findTextOnImage(){
 
-        BitmapDrawable drawable = (BitmapDrawable)camera_imageView.getDrawable();
+        BitmapDrawable drawable = (BitmapDrawable)photoImageView.getDrawable();
         Bitmap imageBitmap = drawable.getBitmap();
 
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
@@ -122,10 +145,7 @@ public class ImageActivity extends AppCompatActivity {
                     Log.i("\nOCR", resultText);
                     
                     startActivityForResult(EditTextActivity.createEditTextActivityIntent(this, R.string.edit_text_correct_typo, resultText), EDIT_TEXT_ACTIVITY_REQUEST_CODE);
-               /* Intent intent = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
-                intent.putExtra("resultText", resultText);
-
-                startActivity(intent);*/
+          
                 })
                 .addOnFailureListener(
                         e -> {
@@ -154,7 +174,7 @@ public class ImageActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                camera_imageView.setImageURI(resultUri);
+                photoImageView.setImageURI(resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 try {
                     throw new Exception(result.getError());
