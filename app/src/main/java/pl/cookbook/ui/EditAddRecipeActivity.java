@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +40,7 @@ import pl.cookbook.database.entities.RecipeProduct;
 import pl.cookbook.database.entities.Unit;
 import pl.cookbook.ui.adapters.RecipeProductsAdapter;
 import pl.cookbook.ui.listeners.OnRecipeProductListInteractionListener;
+
 
 public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipeProductListInteractionListener {
     
@@ -80,6 +83,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
     private AlertDialog dialog;
     private Button cameraBtn;
     private Button galleryBtn;
+    private MenuItem deleteRecipeMenuItem;
 
     private String currentPhotoPath;
     Uri photoUri;
@@ -102,6 +106,8 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         //if new recipe
         if (recipe == null)
             recipe = new Recipe();
+
+
         recipeProductList = appDatabase.recipeProductsDao().getByIdRecipe(recipe.idRecipe);
         unitList = appDatabase.unitsDao().getAll();
 
@@ -153,14 +159,37 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
             createChooseCameraGalleryDialog();
         });
         editProductsBtn = findViewById(R.id.editProductsBtn);
-        editProductsBtn.setOnClickListener(v -> {
-            startActivityForResult(new Intent(this, ProductsListActivity.class), ADD_PRODUCT_REQUEST_CODE);
-        });
+        editProductsBtn.setOnClickListener(v -> startActivityForResult(new Intent(this, ProductsListActivity.class), ADD_PRODUCT_REQUEST_CODE));
 
         editRecipeBtn = findViewById(R.id.editRecipeBtn);
-        editRecipeBtn.setOnClickListener(v -> {
-            createChooseCameraGalleryDialog();
-        });
+        editRecipeBtn.setOnClickListener(v -> createChooseCameraGalleryDialog());
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.delete_recipe_option_menu, menu);
+
+        if(recipe != null) {
+            MenuItem deleteRecipeMenuItem = menu.findItem(R.id.menu_delete_recipe);
+
+            deleteRecipeMenuItem.setOnMenuItemClickListener(menuItem -> {
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle(R.string.confirm_deletion_recipe)
+                        .setPositiveButton(R.string.yes, (dialog, which) -> {
+                            AppDatabase.getInstance(this).recipesDao().deleteByIdRecipe(recipe.idRecipe);
+                            startActivity(new Intent(EditAddRecipeActivity.this, MainActivity.class));
+                        })
+                        .setNegativeButton(R.string.no, null)
+                        .create();
+                alertDialog.show();
+
+                return true;
+            });
+        }
+
+        return true;
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -268,13 +297,9 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         dialog = dialogBuilder.create();
         dialog.show();
 
-        cameraBtn.setOnClickListener(v -> {
-            openCamera();
-        });
+        cameraBtn.setOnClickListener(v -> openCamera());
 
-        galleryBtn.setOnClickListener(v -> {
-            openGallery();
-        });
+        galleryBtn.setOnClickListener(v -> openGallery());
     }
 
     private void openCamera() {

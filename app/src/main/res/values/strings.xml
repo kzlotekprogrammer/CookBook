@@ -24,5 +24,7 @@
     <string name="no">Nie</string>
     <string name="product_already_added">Produkt już dodany!</string>
     <string name="edit_product">Edytuj produkt</string>
+    <string name="delete">Delete</string>
+    <string name="confirm_deletion_recipe">"Czy na pewno chcesz usunąć ten przepis?"</string>
     <!--    todo tłumaczenia-->
 </resources>

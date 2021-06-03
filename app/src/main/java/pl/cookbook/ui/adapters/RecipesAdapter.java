@@ -57,11 +57,10 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
             //holder.imageView.setImageURI(Uri.parse(recipe.imageFileName));*/
 
         if (recipe.imageFileName != null)
-        {
             holder.imageView.setImageURI(Uri.parse(recipe.imageFileName));
-        } else {
+        else
             holder.imageView.setImageResource(R.drawable.ic_baseline_local_dining_96);
-        }
+
 
         if (recipe.name.length() > 20)
             holder.textViewName.setText(String.format("%s...", recipe.name.substring(0, 17)));
