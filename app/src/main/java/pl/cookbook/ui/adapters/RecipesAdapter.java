@@ -2,6 +2,8 @@ package pl.cookbook.ui.adapters;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,13 +46,19 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Recipe recipe = filteredRecipesList.get(position);
 
-        File imgFile = null;
+        // todo zweryfikować zmianę
+        /*File imgFile = null;
         if (recipe.imageFileName != null)
             imgFile = new File(holder.itemView.getContext().getFilesDir(), recipe.imageFileName);
 
         if (imgFile != null && imgFile.exists()) {
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             holder.imageView.setImageBitmap(myBitmap);
+            //holder.imageView.setImageURI(Uri.parse(recipe.imageFileName));*/
+
+        if (recipe.imageFileName != null)
+        {
+            holder.imageView.setImageURI(Uri.parse(recipe.imageFileName));
         } else {
             holder.imageView.setImageResource(R.drawable.ic_baseline_local_dining_96);
         }

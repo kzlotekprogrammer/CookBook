@@ -24,7 +24,7 @@ import pl.cookbook.ui.listeners.OnRecipesListItemInteractionListener;
 
 public class MainActivity extends AppCompatActivity implements OnRecipesListItemInteractionListener {
 
-    private static final int EDIT_ADD_RECIPE_REQUEST_CODE = 1;
+    public static final int EDIT_ADD_RECIPE_REQUEST_CODE = 1;
     List<Recipe> recipesList;
     RecipesAdapter recipesAdapter;
     RecyclerView recycler;
