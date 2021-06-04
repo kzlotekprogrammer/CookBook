@@ -12,7 +12,7 @@
     <string name="text_scan">Skanowanie tekstu</string>
     <string name="typing">Wpisanie</string>
     <string name="adding_method">Metoda wprowadzania</string>
-    <string name="product_list">Lista produktów</string>
+    <string name="product_list">Lista składników</string>
     <string name="save_recipe">Zapisz przepis</string>
     <string name="select_product">Wybierz produkt</string>
     <string name="product_name">Nazwa produktu</string>
@@ -26,5 +26,14 @@
     <string name="edit_product">Edytuj produkt</string>
     <string name="delete">Delete</string>
     <string name="confirm_deletion_recipe">"Czy na pewno chcesz usunąć ten przepis?"</string>
+    <string name="confirm_image">Zatwierdź</string>
+    <string name="Crop">Przytnij</string>
+    <string name="image_camera">image_camera</string>
+    <string name="add_recipe_photo">Dodaj zdjęcie potrawy</string>
+    <string name="add_title">Wpisz tytuł</string>
+    <string name="add_products">Dodaj składniki</string>
+    <string name="add_execution">Dodaj wykonanie</string>
+    <string name="execution">Wykonanie</string>
+    <string name="recipe_title">Tytuł przepisu</string>
     <!--    todo tłumaczenia-->
 </resources>

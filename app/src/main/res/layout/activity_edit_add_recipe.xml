@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:divider="@android:drawable/divider_horizontal_textfield"
     tools:context=".ui.EditAddRecipeActivity">
 
 
@@ -16,16 +17,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/titleLabel"
+                android:text="@string/recipe_title" />
+
             <EditText
                 android:id="@+id/titleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:ems="10"
+                android:hint="@string/add_title"
                 android:inputType="textMultiLine"
-                android:hint="Wpisz tytuł"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteX="30dp"
                 tools:layout_editor_absoluteY="58dp" />
+
+            <Button
+                android:id="@+id/editImageBtn"
+                android:layout_width="88dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:text="@string/add_recipe_photo"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteY="168dp" />
 
             <ImageView
                 android:id="@+id/recipeEditAddImage"
@@ -37,59 +52,52 @@
                 tools:srcCompat="@android:drawable/ic_menu_gallery" />
 
             <Button
-                android:id="@+id/editImageBtn"
-                android:layout_width="88dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:text="Dodaj\nzdjęcie"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="168dp" />
-
-            <Button
                 android:id="@+id/editProductsBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="Dodaj\nskładniki"
+                android:text="@string/add_products"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteY="341dp" />
+
+            <TextView
+                android:id="@+id/productsListLabel"
+                android:text="@string/product_list" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/productsList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/editRecipeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="Dodaj\nwykonanie"
+                android:text="@string/add_execution"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteY="560dp" />
 
-
             <TextView
-                android:id="@+id/productsListLabel"
-                android:text="@string/product_list"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/productsList"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"/>
+                android:id="@+id/executionLabel"
+                android:text="@string/execution" />
 
             <EditText
                 android:id="@+id/executionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:hint="@string/execution"
                 android:inputType="textMultiLine"
-                android:hint="Wykonanie"
                 tools:ignore="MissingConstraints" />
 
             <Button
                 android:id="@+id/btnSaveRecipe"
-                android:text="@string/save_recipe"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:text="@string/save_recipe" />
 
         </TableLayout>
     </ScrollView>

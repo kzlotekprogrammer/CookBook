@@ -66,19 +66,21 @@ public class ImageActivity extends AppCompatActivity {
         photoImageView = findViewById(R.id.camera_image);
 
         if(intent.getIntExtra(ADD_RECIPE_PHOTO, 0) == 1)
-            addRecipePhoto = findViewById(R.id.addRecipePhoto_button);
+            manageAddRecipePhotoButton();
         else
-            findTextBtn = findViewById(R.id.findText_button);
+            manageFindTextButton();
     }
 
 
     private void manageFindTextButton() {
 
+        findTextBtn = findViewById(R.id.findText_button);
         findTextBtn.setOnClickListener(v -> findTextOnImage());
     }
 
     private void manageAddRecipePhotoButton(){
 
+        addRecipePhoto = findViewById(R.id.addRecipePhoto_button);
         addRecipePhoto.setOnClickListener(v -> {
             /*String imageUriString = intent.getStringExtra("imageUri");
             Intent intent1 = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
