@@ -65,10 +65,10 @@ public class ImageActivity extends AppCompatActivity {
         imageCropperBtn = findViewById(R.id.imageCropper_button);
         photoImageView = findViewById(R.id.camera_image);
 
-        if(intent.getIntExtra(ADD_RECIPE_PHOTO, 0) == 1)
-            manageAddRecipePhotoButton();
-        else
-            manageFindTextButton();
+//        if(intent.getIntExtra(ADD_RECIPE_PHOTO, 0) == 1)
+//            manageAddRecipePhotoButton();
+//        else
+//            manageFindTextButton();
     }
 
 
@@ -86,9 +86,13 @@ public class ImageActivity extends AppCompatActivity {
             Intent intent1 = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
             intent1.putExtra("imageUri", imageUriString);
             startActivity(intent1);*/
+            Intent intent = new Intent();
+            intent.putExtra("imageUri", imageUri.toString());
+            setResult(RESULT_OK, intent);
+            finish();
 
-            long idRecipe = intent.getLongExtra(INTENT_ID_RECIPE, 0);
-            startActivityForResult(EditAddRecipeActivity.createEditAddRecipeActivityIntentWithImageUri(this, idRecipe, imageUri.toString()), EDIT_ADD_RECIPE_REQUEST_CODE);
+//            long idRecipe = intent.getLongExtra(INTENT_ID_RECIPE, 0);
+//            startActivityForResult(EditAddRecipeActivity.createEditAddRecipeActivityIntentWithImageUri(this, idRecipe, imageUri.toString()), EDIT_ADD_RECIPE_REQUEST_CODE);
 
         });
     }
@@ -173,10 +177,9 @@ public class ImageActivity extends AppCompatActivity {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-
             if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
-                photoImageView.setImageURI(resultUri);
+                imageUri = result.getUri();
+                photoImageView.setImageURI(imageUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 try {
                     throw new Exception(result.getError());

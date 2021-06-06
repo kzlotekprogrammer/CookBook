@@ -75,7 +75,8 @@ public class RecipeProductsAdapter extends RecyclerView.Adapter<RecipeProductsAd
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
-                    recipeProduct.quantity = Integer.parseInt(s.toString());
+                    recipeProduct.quantity = Double.parseDouble(s.toString());
+                    holder.editTextQuantity.setError(null);
                 } catch (Exception ex) {
                     recipeProduct.quantity = 0;
                     holder.editTextQuantity.setError(context.getString(R.string.invalid_value));

@@ -72,12 +72,12 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         return intent;
     }
 
-    public static Intent createEditAddRecipeActivityIntentWithImageUri(final Context context, final long idRecipe, String imageUri){
-        Intent intent = new Intent(context, EditAddRecipeActivity.class);
-        intent.putExtra(INTENT_ID_RECIPE, idRecipe);
-        intent.putExtra(IMAGE_URI, imageUri);
-        return intent;
-    }
+//    public static Intent createEditAddRecipeActivityIntentWithImageUri(final Context context, final long idRecipe, String imageUri){
+//        Intent intent = new Intent(context, EditAddRecipeActivity.class);
+//        intent.putExtra(INTENT_ID_RECIPE, idRecipe);
+//        intent.putExtra(IMAGE_URI, imageUri);
+//        return intent;
+//    }
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -120,12 +120,12 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         executionEditText = findViewById(R.id.executionEditText);
         executionEditText.setText(recipe.description);
 
-        String photoPath = intent.getStringExtra(IMAGE_URI);
+//        String photoPath = intent.getStringExtra(IMAGE_URI);
         recipePhotoImageView = findViewById(R.id.recipeEditAddImage);
-        if(photoPath != null) {
-            recipePhotoImageView.setImageURI(Uri.parse(photoPath));
-        }
-        else if(recipe.imageFileName != null){
+//        if(photoPath != null) {
+//            recipePhotoImageView.setImageURI(Uri.parse(photoPath));
+//        }
+        if(recipe.imageFileName != null){
             recipePhotoImageView.setImageURI(Uri.parse(recipe.imageFileName));
         }
 
@@ -133,9 +133,9 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         findViewById(R.id.btnSaveRecipe).setOnClickListener(v -> {
             recipe.name = titleEditText.getText().toString();
             recipe.description = executionEditText.getText().toString();
-            if(photoPath != null) {
-                recipe.imageFileName = photoPath;
-            }
+//            if(photoPath != null) {
+//                recipe.imageFileName = photoPath;
+//            }
 
 
             DbHelper.saveRecipe(this, recipe, recipeProductList);
@@ -207,7 +207,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
             long idRecipe = intentThis.getLongExtra(INTENT_ID_RECIPE, 0);
             intent.putExtra(INTENT_ID_RECIPE, idRecipe);
 
-            startActivity(intent);
+            startActivityForResult(intent, IMAGE_ACTIVITY_REQUEST_CODE);
         }
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK){
 
@@ -223,12 +223,15 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
             intent.putExtra(INTENT_ID_RECIPE, idRecipe);
 
             startActivityForResult(intent, IMAGE_ACTIVITY_REQUEST_CODE);
-
         } else if (requestCode == IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                String text = data.getStringExtra(EditTextActivity.INTENT_TEXT);
-                //todo
-//                ((EditText)findViewById(R.id.ProductsEditText)).setText(text);
+                if (data != null) {
+                    String imageUriStr = data.getStringExtra("imageUri");
+                    if (imageUriStr != null) {
+                        recipe.imageFileName = imageUriStr;
+                        recipePhotoImageView.setImageURI(Uri.parse(recipe.imageFileName));
+                    }
+                }
             }
         } else if (requestCode == ADD_PRODUCT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -297,9 +300,9 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         dialog = dialogBuilder.create();
         dialog.show();
 
-        cameraBtn.setOnClickListener(v -> openCamera());
+        cameraBtn.setOnClickListener(v -> {openCamera(); dialog.dismiss();});
 
-        galleryBtn.setOnClickListener(v -> openGallery());
+        galleryBtn.setOnClickListener(v -> {openGallery(); dialog.dismiss();});
     }
 
     private void openCamera() {
@@ -337,7 +340,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
     }
 
     private void openGallery(){
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        Intent gallery = new Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
 }
