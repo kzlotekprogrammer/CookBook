@@ -162,7 +162,10 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         editProductsBtn.setOnClickListener(v -> startActivityForResult(new Intent(this, ProductsListActivity.class), ADD_PRODUCT_REQUEST_CODE));
 
         editRecipeBtn = findViewById(R.id.editRecipeBtn);
-        editRecipeBtn.setOnClickListener(v -> createChooseCameraGalleryDialog());
+        editRecipeBtn.setOnClickListener(v -> {
+            ADD_RECIPE_PHOTO = 0;
+            createChooseCameraGalleryDialog();
+        });
     }
 
 
@@ -226,10 +229,15 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
         } else if (requestCode == IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
-                    String imageUriStr = data.getStringExtra("imageUri");
-                    if (imageUriStr != null) {
-                        recipe.imageFileName = imageUriStr;
-                        recipePhotoImageView.setImageURI(Uri.parse(recipe.imageFileName));
+                    if (ADD_RECIPE_PHOTO == 1) {
+                        String imageUriStr = data.getStringExtra("imageUri");
+                        if (imageUriStr != null) {
+                            recipe.imageFileName = imageUriStr;
+                            recipePhotoImageView.setImageURI(Uri.parse(recipe.imageFileName));
+                        }
+                    } else {
+                        String text = data.getStringExtra(EditTextActivity.INTENT_TEXT);
+                        executionEditText.setText(text);
                     }
                 }
             }

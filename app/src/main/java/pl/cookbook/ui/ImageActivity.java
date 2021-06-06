@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -55,6 +56,9 @@ public class ImageActivity extends AppCompatActivity {
         manageImageCropperButton();
         manageImage();
 
+        addRecipePhoto = findViewById(R.id.addRecipePhoto_button);
+        findTextBtn = findViewById(R.id.findText_button);
+
         if(intent.getIntExtra(ADD_RECIPE_PHOTO, 0) == 1)
             manageAddRecipePhotoButton();
         else
@@ -73,14 +77,14 @@ public class ImageActivity extends AppCompatActivity {
 
 
     private void manageFindTextButton() {
-
-        findTextBtn = findViewById(R.id.findText_button);
+        addRecipePhoto.setVisibility(View.GONE);
+        findTextBtn.setVisibility(View.VISIBLE);
         findTextBtn.setOnClickListener(v -> findTextOnImage());
     }
 
     private void manageAddRecipePhotoButton(){
-
-        addRecipePhoto = findViewById(R.id.addRecipePhoto_button);
+        addRecipePhoto.setVisibility(View.VISIBLE);
+        findTextBtn.setVisibility(View.GONE);
         addRecipePhoto.setOnClickListener(v -> {
             /*String imageUriString = intent.getStringExtra("imageUri");
             Intent intent1 = new Intent(ImageActivity.this, EditAddRecipeActivity.class);
