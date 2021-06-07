@@ -137,8 +137,22 @@ public class ProductsListActivity extends AppCompatActivity implements OnProduct
             currentProduct = null;
         }
 
-        else if(requestCode == CAMERA_IMAGE || requestCode == PICK_IMAGE){
+        else if(requestCode == CAMERA_IMAGE){
             if(resultCode == RESULT_OK){
+                Intent intent = new Intent(ProductsListActivity.this, ImageActivity.class);
+                intent.putExtra(IMAGE_URI, imageUri.toString());
+                intent.putExtra("requestCode", requestCode);
+                if(currentPhotoPath != null)
+                    intent.putExtra("currentPhotoPath", currentPhotoPath);
+
+                startActivityForResult(intent, ADD_NEW_PRODUCT_REQUEST_CODE);
+            }
+        }
+
+        else if (requestCode == PICK_IMAGE) {
+            if(resultCode == RESULT_OK){
+                imageUri = data.getData();
+
                 Intent intent = new Intent(ProductsListActivity.this, ImageActivity.class);
                 intent.putExtra(IMAGE_URI, imageUri.toString());
                 intent.putExtra("requestCode", requestCode);
