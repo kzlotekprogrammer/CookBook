@@ -177,7 +177,7 @@ public class EditAddRecipeActivity extends AppCompatActivity implements OnRecipe
                 AlertDialog alertDialog = new AlertDialog.Builder(this)
                         .setTitle(R.string.confirm_deletion_recipe)
                         .setPositiveButton(R.string.yes, (dialog, which) -> {
-                            AppDatabase.getInstance(this).recipesDao().deleteByIdRecipe(recipe.idRecipe);
+                            DbHelper.deleteRecipe(this, recipe.idRecipe);
                             startActivity(new Intent(EditAddRecipeActivity.this, MainActivity.class));
                         })
                         .setNegativeButton(R.string.no, null)
